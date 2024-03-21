@@ -8,6 +8,7 @@ plt.subplot(1, 2, 1)
 plt.title("Original") 
 plt.imshow(image)
 
+# Remove noise using a median filter
 filtered_image = cv2.medianBlur(image, 15)
 
 cv2.imwrite('week2/img/Median-Blur.jpg', filtered_image)

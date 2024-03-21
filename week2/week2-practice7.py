@@ -8,6 +8,7 @@ plt.subplot(1, 2, 1)
 plt.title("Original")
 plt.imshow(image)
 
+# Inverse by subtracting from 255
 inverse_image = 255 - image
 
 cv2.imwrite('week2/image/inverse_image.jpg', inverse_image)
