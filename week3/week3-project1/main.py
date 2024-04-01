@@ -7,13 +7,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Input validation
-def getInput(prompt, t):
+def getInput(prompt, t, limit):
     while True:
         v = input(f'{prompt}: ')
         try:
-            return t(v)
+            v = t(v)
+            if v not in range(0, limit):
+                raise ValueError
+            return v
         except ValueError:
             print('Invalid input')
+
 
 # Image Directories
 dir_path = f"{os.getcwd()}/art"
@@ -63,10 +67,37 @@ def enhance(choice, image_path):
        Choice -> for technique chosen\n
        Image -> image being fed into function"""
 
-    img = cv2.imread(image_path, 0)                
+    img = cv2.imread(image_path)                
+    
+    # Blurs
     if choice == 0:
-        # Blurs
-        pass
+        
+        #Plot the original image
+        plt.subplot(1, 4, 1)
+        plt.title("Original")
+        plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+        # plt.imshow(img)
+
+        # Gaussian Blur
+        plt.subplot(1, 4, 2)        
+        Guassian = cv2.GaussianBlur((cv2.cvtColor(img, cv2.COLOR_BGR2RGB)), (7, 7), 0)
+        plt.title("Gaussian Blurring")
+        plt.imshow(Guassian)
+
+        # Median Blur
+        plt.subplot(1, 4, 3)
+        median = cv2.medianBlur((cv2.cvtColor(img, cv2.COLOR_BGR2RGB)), 5)
+        plt.title("Median Blurring")
+        plt.imshow(median)
+
+        # Bilateral Blur
+        plt.subplot(1, 4, 4)
+        bilateral = cv2.bilateralFilter((cv2.cvtColor(img, cv2.COLOR_BGR2RGB)), 9, 75, 75)
+        plt.title("Bilateral Blurring")
+        plt.imshow(bilateral)
+
+
+
 
     else:
         #Plot the original image
@@ -98,7 +129,7 @@ def enhance(choice, image_path):
             case 3:
                 result = cv2.warpAffine(img, cv2.getRotationMatrix2D((cols/2, rows/2), 30, 0.6), (cols, rows))
 
-                #Plot the reflected image
+                #Plot the rotated image
                 plt.subplot(1, 2, 2)
                 plt.title("Rotated Image")
 
@@ -106,7 +137,7 @@ def enhance(choice, image_path):
             case 4:
                 result = img[450:700, 200:500]
 
-                #Plot the reflected image
+                #Plot the cropped image
                 plt.subplot(1, 2, 2)
                 plt.title("Cropped Image") 
 
@@ -116,7 +147,7 @@ def enhance(choice, image_path):
                 result = cv2.warpPerspective(img, M, (int(cols*1.5),
                                                         int(cols*1.5)))
 
-                #Plot the translated image
+                #Plot the sheared image
                 plt.subplot(1, 2, 2)
                 plt.title("Sheared Image X-Axis")
 
@@ -126,10 +157,11 @@ def enhance(choice, image_path):
                 result = cv2.warpPerspective(img, M, (int(cols*1.5),
                                                         int(cols*1.5)))
 
-                #Plot the translated image
+                #Plot the sheared image
                 plt.subplot(1, 2, 2)
                 plt.title("Sheared Image Y-Axis")
-                                
+
+            # No technique selected                    
             case _:
                 print("No technique selected.")
 
@@ -138,21 +170,33 @@ def enhance(choice, image_path):
 
 
 def main():
-    print("Welcone to the Yemisi Shyllon Museum of Art Image database. \nPlease enter your valid PAU email address and age to access the art collections.")
-    email = input("Email: ")
-    age = getInput("Age", int)
+    start = getInput("Welcone to the Yemisi Shyllon Museum of Art Image database.\nPress 1 to sign in or 0 to exit system", int, 2)
+    if start == 1:
+        login = False
+        print("\nPlease enter your valid PAU email address and age to access the art collections.")
+        while login == False:
+            email = input("\nEmail: ")
+            age = getInput("Age", int, 150)
+            if authenticate(email, age):
+                login = True
 
-    if authenticate(email, age):
-            redo = True
-            while redo:
-                choice = getInput("Input the number of the art category would you like to enhance:\n(1) Contemporary Art \n(2) Modern Art\n(3) Traditional Art\n\nChoice", int)
-                image_path, images = get_images(choice)
-                if images != None:
-                    print("\n")
-                    [print(f"({index}) {image}") for index, image in enumerate(images)]
-                    image = getInput(f"\nChoose the number of the image you wish to transform: ", int)
-                    transformation = getInput("\nChoose the number of the transformation you wish to perform on the image:", int)
-                    enhance(transformation, image_path+images[image])
+                redo = True
+                while redo:
+                    choice = getInput("\nInput the number of the art category would you like to enhance:\n(0) Contemporary Art \n(1) Modern Art\n(2) Traditional Art\nChoice", int, 3)
+                    image_path, images = get_images(choice)
+                    if images != None:
+                        print("\nThese are the artworks under this collection.\nInput the number of the image you wish to transform:")
+                        [print(f"({index}) {image}") for index, image in enumerate(images)]
+                        image = getInput(f"Choice", int, len(images))
+                        print("\nInput the number of the transformation you wish to perform on the image:")
+                        [print(f"({index}) {image}") for index, image in enumerate(["Blur image in 3 ways", "Translate Image", "Reflect Image", "Rotate Image", "Crop Image", "X-Axis Shearing", "Y-Axis Shearing"])]
+                        transformation = getInput("Choice", int, 7)
+                        enhance(transformation, image_path+images[image])
+
+                        loop = input("Would you like to perform another enhancement?(y/n): ").lower()
+                        if loop != "y":
+                            redo = False
+                print ("Signing you out. Goodbye!")
                     
 
                 
