@@ -6,7 +6,7 @@ img = cv.imread('img/sst.jpg', 0)
 rows, cols = img.shape
 
 #Plot the original image
-plt.subplot(2, 2, 1)    #row, column, column position
+plt.subplot(1, 2, 1)    #row, column, column position
 plt.title("Original")
 plt.imshow(img)
 

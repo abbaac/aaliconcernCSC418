@@ -16,7 +16,7 @@ sheared_img = cv.warpPerspective(img, M, (int(cols*1.5),
 
 #Plot the translated image
 plt.subplot(1, 2, 2)
-plt.title("Sheared Image X-Axis")
+plt.title("Sheared Image Y-Axis")
 plt.imshow(sheared_img)
 plt.show()
 

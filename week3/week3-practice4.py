@@ -16,7 +16,7 @@ cropped_img = img[450:700, 200:500]
 
 #Plot the reflected image
 plt.subplot(1, 2, 2)
-plt.title("Reflected Image")
+plt.title("Cropped Image")
 plt.imshow(cropped_img)
 plt.show()
 
