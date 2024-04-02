@@ -170,7 +170,7 @@ def enhance(choice, image_path):
 
 
 def main():
-    start = getInput("Welcone to the Yemisi Shyllon Museum of Art Image database.\nPress 1 to sign in or 0 to exit system", int, 2)
+    start = getInput("Welcome to the Yemisi Shyllon Museum of Art Image database.\nPress 1 to sign in or 0 to exit system", int, 2)
     if start == 1:
         login = False
         print("\nPlease enter your valid PAU email address and age to access the art collections.")
